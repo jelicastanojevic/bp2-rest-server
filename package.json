@@ -1,0 +1,38 @@
+{
+  "name": "RestServer",
+  "version": "0.0.1",
+  "description": "Rest API",
+  "main": "server.js",
+  "scripts": {
+    "start": "export NODE_ENV=production && node dist/server.js",
+    "build": "tsc",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "test": "export NODE_ENV=test && mocha -r ts-node/register test/**/*.spec.ts",
+    "lint": "tslint -c tslint.json -p tsconfig.json"
+  },
+  "keywords": [],
+  "author": "Jelica",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "log4js": "^4.3.1",
+    "mysql": "^2.17.1"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/cors": "^2.8.5",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.0",
+    "@types/mysql": "^2.15.7",
+    "@types/node": "^12.0.7",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.1"
+  }
+}
