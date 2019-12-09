@@ -37,7 +37,7 @@ export const ProductController: IProductController = {
   async insertProduct(req, res) {
     try {
       let { idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja } = req.body;
-      const product = await ProductDb.insertProduct(
+      const { insertId } = await ProductDb.insertProduct(
         idProizvoda,
         nazivProizvoda,
         trenutnaCena,
@@ -45,7 +45,7 @@ export const ProductController: IProductController = {
         nazivTipaPakovanja
       );
 
-      return res.status(200).send({ product });
+      return res.status(200).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res

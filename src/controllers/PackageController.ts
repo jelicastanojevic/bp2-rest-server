@@ -43,9 +43,9 @@ export const PackageController: IPackageController = {
   async insertPackage(req, res) {
     try {
       let { idTipaPakovanja, nazivTipaPakovanja } = req.body;
-      const packagee = await PackageDb.insertPackage(idTipaPakovanja, nazivTipaPakovanja);
+      const { insertId } = await PackageDb.insertPackage(idTipaPakovanja, nazivTipaPakovanja);
 
-      return res.status(200).send({ packagee });
+      return res.status(200).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res

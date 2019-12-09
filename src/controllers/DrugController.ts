@@ -58,7 +58,7 @@ export const DrugController: IDrugController = {
         idTipaPakovanja,
         idJediniceMere,
       } = req.body;
-      const drug = await DrugDb.insertDrug(
+      const { insertId } = await DrugDb.insertDrug(
         idLeka,
         dozaPoPakovanju,
         komadPoPakovanju,
@@ -67,7 +67,7 @@ export const DrugController: IDrugController = {
         idJediniceMere
       );
 
-      return res.status(200).send({ drug });
+      return res.status(200).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
