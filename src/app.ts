@@ -5,7 +5,9 @@ import express from 'express';
 import { config } from './config';
 import { drugRoutes } from './routes/drugRoutes';
 import { packageRoutes } from './routes/packageRoutes';
+import { priceRoutes } from './routes/priceRoutes';
 import { productRoutes } from './routes/productRoutes';
+import { stateRoutes } from './routes/stateRoutes';
 
 // Controllers (route handlers)
 // API keys and Passport configuration
@@ -23,5 +25,7 @@ app.use(cors());
 app.use('/products', productRoutes);
 app.use('/drugs', drugRoutes);
 app.use('/packages', packageRoutes);
+app.use('/states', stateRoutes);
+app.use('/prices', priceRoutes);
 
 export default app;

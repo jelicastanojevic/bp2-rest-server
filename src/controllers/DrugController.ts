@@ -27,7 +27,7 @@ export const DrugController: IDrugController = {
         'ID jedinice mere',
       ];
 
-      return res.status(200).send({ tableColumns: tableColumns, tableData: drugs });
+      return res.status(200).send({ tableColumns: tableColumns, tableData: drugs.rows });
     } catch (error) {
       logger.error(error);
       return res

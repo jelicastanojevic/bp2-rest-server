@@ -26,7 +26,8 @@ export const ProductController: IProductController = {
         'Tip pakovanja',
       ];
 
-      return res.status(200).send({ tableColumns: tableColumns, tableData: products });
+      console.log(products);
+      return res.status(200).send({ tableColumns: tableColumns, tableData: products.rows });
     } catch (error) {
       logger.error(error);
       return res

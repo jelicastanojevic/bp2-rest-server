@@ -19,7 +19,7 @@ export const PackageController: IPackageController = {
       const packages = await PackageDb.getPackages();
       const tableColumns = ['RB', 'Šifra pakovanja', 'Naziv'];
 
-      return res.status(200).send({ tableColumns: tableColumns, tableData: packages });
+      return res.status(200).send({ tableColumns: tableColumns, tableData: packages.rows });
     } catch (error) {
       logger.error(error);
       return res
