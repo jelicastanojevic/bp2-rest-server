@@ -8,6 +8,7 @@ import { packageRoutes } from './routes/packageRoutes';
 import { priceRoutes } from './routes/priceRoutes';
 import { productRoutes } from './routes/productRoutes';
 import { stateRoutes } from './routes/stateRoutes';
+import { supplierRoutes } from './routes/supplierRoutes';
 
 // Controllers (route handlers)
 // API keys and Passport configuration
@@ -27,5 +28,6 @@ app.use('/drugs', drugRoutes);
 app.use('/packages', packageRoutes);
 app.use('/states', stateRoutes);
 app.use('/prices', priceRoutes);
+app.use('/suppliers', supplierRoutes);
 
 export default app;

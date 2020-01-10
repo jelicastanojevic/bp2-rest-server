@@ -58,7 +58,7 @@ export const PriceController: IPriceController = {
   async updatePrice(req, res) {
     try {
       let { id } = req.params;
-      c;
+      let { datumPromene, cena } = req.body;
       const price = await PriceDb.updatePrice(id, datumPromene, cena);
 
       return res.status(200).send({ price });
