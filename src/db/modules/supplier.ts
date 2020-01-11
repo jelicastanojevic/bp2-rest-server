@@ -58,7 +58,7 @@ export const SupplierDb = {
                            adresa = $2, \
                            email = $3, \
                            maticni_broj= $4, \
-                           tekuci_racun = ($5, $6) \
+                           tekuci_racun = ($6, $5), \
                            telefon = $7 \
                            WHERE pib = $8',
       [naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon, pib]

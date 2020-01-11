@@ -3,7 +3,7 @@ import { getLogger } from 'log4js';
 
 import { PriceDb } from '../db/modules/price';
 
-const logger = getLogger('ProductController.ts');
+const logger = getLogger('PriceController.ts');
 
 interface IPriceController {
   getPrices: RequestHandler;

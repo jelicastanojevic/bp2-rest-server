@@ -5,7 +5,7 @@ export const PriceDb = {
     return await Database.executeQuery(
       'SELECT id_proizvoda as "idProizvoda", \
               datum_promene as "datumPromene",\
-              cena as "cena", \
+              cena  \
               FROM istorija_cena'
     );
   },
@@ -13,7 +13,7 @@ export const PriceDb = {
     return await Database.executeQuery(
       'SELECT id_proizvoda as "idProizvoda", \
               datum_promene as "datumPromene",\
-              cena as "cena", \
+              cena \
               FROM istorija_cena \
               WHERE id_proizvoda = $1 AND datum_promene = $2',
       [idProizvoda, datumPromene]
@@ -27,7 +27,7 @@ export const PriceDb = {
   },
   async updatePrice(id: number, datumPromene: string, cena: number) {
     return await Database.executeQuery(
-      'UPDATE istorija_cena SET cena = $1, \
+      'UPDATE istorija_cena SET cena = $1 \
                            WHERE id_proizvoda = $2 AND datum_promene = $3',
       [cena, id, datumPromene]
     );
