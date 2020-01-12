@@ -3,7 +3,7 @@ import { getLogger } from 'log4js';
 
 import { DrugDb } from '../db/modules/drug';
 
-const logger = getLogger('PackageController.ts');
+const logger = getLogger('DrugController.ts');
 
 interface IDrugController {
   getDrugs: RequestHandler;

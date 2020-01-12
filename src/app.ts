@@ -3,7 +3,9 @@ import cors from 'cors';
 import express from 'express';
 
 import { config } from './config';
+import { catalogueRoutes } from './routes/catalogueRoutes';
 import { drugRoutes } from './routes/drugRoutes';
+import { employeeRoutes } from './routes/employeeRoutes';
 import { packageRoutes } from './routes/packageRoutes';
 import { priceRoutes } from './routes/priceRoutes';
 import { productRoutes } from './routes/productRoutes';
@@ -29,5 +31,7 @@ app.use('/packages', packageRoutes);
 app.use('/states', stateRoutes);
 app.use('/prices', priceRoutes);
 app.use('/suppliers', supplierRoutes);
+app.use('/catalogues', catalogueRoutes);
+app.use('/employees', employeeRoutes);
 
 export default app;
