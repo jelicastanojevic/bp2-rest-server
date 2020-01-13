@@ -63,9 +63,9 @@ export const CatalogueController: ICatalogueController = {
     try {
       let { id } = req.params;
       let { datum, rb, idDobavljaca } = req.body;
-      const drug = await CatalogueDb.updateCatalogue(id, datum, rb, idDobavljaca);
+      const catalogue = await CatalogueDb.updateCatalogue(id, datum, rb, idDobavljaca);
 
-      return res.status(200).send({ drug });
+      return res.status(200).send({ catalogue });
     } catch (error) {
       logger.error(error);
       return res
@@ -76,9 +76,9 @@ export const CatalogueController: ICatalogueController = {
   async deleteCatalogue(req, res) {
     try {
       let { id } = req.params;
-      const drug = await CatalogueDb.deleteCatalogue(id);
+      const catalogue = await CatalogueDb.deleteCatalogue(id);
 
-      return res.status(200).send({ drug });
+      return res.status(200).send({ catalogue });
     } catch (error) {
       logger.error(error);
       return res

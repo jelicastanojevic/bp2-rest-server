@@ -54,7 +54,7 @@ export const EmployeeDb = {
     tipZaposlenog: string
   ) {
     return await Database.executeQuery(
-      'UPDATE zaposleni SET ime = $1, prezime = $2, id_dobavljaca = $3, email = $4, telefon = $5, jmbg = $6, tip_zaposlenog = $7 WHERE id_kataloga = $8',
+      'UPDATE zaposleni SET ime = $1, prezime = $2, adresa = $3, email = $4, telefon = $5, jmbg = $6, tip_zaposlenog = $7 WHERE id = $8',
       [ime, prezime, adresa, email, telefon, jmbg, tipZaposlenog, idZaposlenog]
     );
   },
