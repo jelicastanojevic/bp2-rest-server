@@ -19,7 +19,7 @@ export const PriceController: IPriceController = {
       const prices = await PriceDb.getPrices();
       const tableColumns = ['RB', 'Šifra proizvoda', 'Datum promene', 'Cena'];
 
-      console.log(prices);
+      // console.log(prices);
       return res.status(200).send({ tableColumns: tableColumns, tableData: prices.rows });
     } catch (error) {
       logger.error(error);
@@ -59,7 +59,9 @@ export const PriceController: IPriceController = {
     try {
       let { id } = req.params;
       let { datumPromene, cena } = req.body;
-      const price = await PriceDb.updatePrice(id, datumPromene, cena);
+      let dat = datumPromene.split('.')[0];
+      dat = dat.split('T')[0] + ' ' + dat.split('T')[1];
+      const price = await PriceDb.updatePrice(id, dat, cena);
 
       return res.status(200).send({ price });
     } catch (error) {
@@ -73,8 +75,11 @@ export const PriceController: IPriceController = {
     try {
       let { id } = req.params;
       let { datumPromene } = req.body;
-      const price = await PriceDb.deletePrice(id, datumPromene);
+      let dat = datumPromene.split('.')[0];
+      dat = dat.split('T')[0] + ' ' + dat.split('T')[1];
 
+      const price = await PriceDb.deletePrice(id, dat);
+      // throw Error();
       return res.status(200).send({ price });
     } catch (error) {
       logger.error(error);
