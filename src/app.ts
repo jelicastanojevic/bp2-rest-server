@@ -7,6 +7,7 @@ import { catalogueItemRoutes } from './routes/catalogueItemRoutes';
 import { catalogueRoutes } from './routes/catalogueRoutes';
 import { drugRoutes } from './routes/drugRoutes';
 import { employeeRoutes } from './routes/employeeRoutes';
+import { itemProductRoutes } from './routes/itemProductRoutes';
 import { packageRoutes } from './routes/packageRoutes';
 import { priceRoutes } from './routes/priceRoutes';
 import { productRoutes } from './routes/productRoutes';
@@ -35,5 +36,6 @@ app.use('/suppliers', supplierRoutes);
 app.use('/catalogues', catalogueRoutes);
 app.use('/catalogue-items', catalogueItemRoutes);
 app.use('/employees', employeeRoutes);
+app.use('/item-products', itemProductRoutes);
 
 export default app;

@@ -24,6 +24,7 @@ export const ProductController: IProductController = {
         'Trenutna cena',
         'Količina',
         'Tip pakovanja',
+        'Šifra fabrike',
       ];
 
       console.log(products);
@@ -37,13 +38,21 @@ export const ProductController: IProductController = {
   },
   async insertProduct(req, res) {
     try {
-      let { idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja } = req.body;
+      let {
+        idProizvoda,
+        nazivProizvoda,
+        trenutnaCena,
+        kolicina,
+        nazivTipaPakovanja,
+        idFabrike,
+      } = req.body;
       const { insertId } = await ProductDb.insertProduct(
         idProizvoda,
         nazivProizvoda,
         trenutnaCena,
         kolicina,
-        nazivTipaPakovanja
+        nazivTipaPakovanja,
+        idFabrike
       );
 
       return res.status(200).send({ insertId });
@@ -70,14 +79,22 @@ export const ProductController: IProductController = {
   async updateProduct(req, res) {
     try {
       let { id } = req.params;
-      let { idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja } = req.body;
+      let {
+        idProizvoda,
+        nazivProizvoda,
+        trenutnaCena,
+        kolicina,
+        nazivTipaPakovanja,
+        idFabrike,
+      } = req.body;
       const product = await ProductDb.updateProduct(
         id,
         idProizvoda,
         nazivProizvoda,
         trenutnaCena,
         kolicina,
-        nazivTipaPakovanja
+        nazivTipaPakovanja,
+        idFabrike
       );
 
       return res.status(200).send({ product });

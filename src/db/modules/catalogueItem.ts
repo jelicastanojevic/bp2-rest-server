@@ -28,7 +28,7 @@ export const CatalogueItemDb = {
   },
   async insertCatalogueItem(
     idKataloga: number,
-    rbStavke: null,
+    rbStavke: number,
     naziv: string,
     cena: number,
     jm: string,
@@ -42,7 +42,7 @@ export const CatalogueItemDb = {
   },
   async updateCatalogueItem(
     idKataloga: number,
-    rbStavke: null,
+    rbStavke: number,
     naziv: string,
     cena: number,
     jm: string,
