@@ -19,6 +19,7 @@ export const SupplierController: ISupplierController = {
       const suppliers = await SupplierDb.getSuppliers();
       const tableColumns = [
         'RB',
+        'ID',
         'PIB',
         'Naziv',
         'Adresa',
@@ -40,8 +41,19 @@ export const SupplierController: ISupplierController = {
   },
   async insertSupplier(req, res) {
     try {
-      let { pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon } = req.body;
+      let {
+        id,
+        pib,
+        naziv,
+        adresa,
+        email,
+        maticniBroj,
+        nazivBanke,
+        brojRacuna,
+        telefon,
+      } = req.body;
       const { insertId } = await SupplierDb.insertSupplier(
+        id,
         pib,
         naziv,
         adresa,
@@ -76,9 +88,10 @@ export const SupplierController: ISupplierController = {
   async updateSupplier(req, res) {
     try {
       let { id } = req.params;
-      let { naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon } = req.body;
+      let { pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon } = req.body;
       const supplier = await SupplierDb.updateSupplier(
         id,
+        pib,
         naziv,
         adresa,
         email,

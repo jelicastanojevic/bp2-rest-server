@@ -3,7 +3,8 @@ import { Database } from '..';
 export const SupplierDb = {
   async getSuppliers() {
     return await Database.executeQuery(
-      'SELECT pib, \
+      'SELECT id, \
+              pib, \
               naziv,\
               adresa, \
               email, \
@@ -14,9 +15,10 @@ export const SupplierDb = {
               FROM dobavljac_view'
     );
   },
-  async getSupplier(pib: string) {
+  async getSupplier(id: string) {
     return await Database.executeQuery(
-      'SELECT pib, \
+      'SELECT id, \
+              pib, \
               naziv,\
               adresa, \
               email, \
@@ -24,12 +26,13 @@ export const SupplierDb = {
               (tekuci_racun).naziv_banke as "nazivBanke", \
               (tekuci_racun).broj_racuna as "brojRacuna", \
               telefon \
-              FROM dobavljac_view WHERE pib = $1',
-      [pib]
+              FROM dobavljac_view WHERE id = $1',
+      [id]
     );
   },
   async insertSupplier(
-    pib: number,
+    id: number,
+    pib: string,
     naziv: string,
     adresa: string,
     email: string,
@@ -39,12 +42,13 @@ export const SupplierDb = {
     telefon: string
   ) {
     return await Database.executeQuery(
-      'INSERT INTO dobavljac_view(pib, naziv, adresa, email, maticni_broj, tekuci_racun, telefon) VALUES($1, $2, $3, $4, $5, ($6, $7), $8)',
-      [pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon]
+      'INSERT INTO dobavljac_view(id, pib, naziv, adresa, email, maticni_broj, tekuci_racun, telefon) VALUES($1, $2, $3, $4, $5, $6, ($8, $7), $9)',
+      [id, pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon]
     );
   },
   async updateSupplier(
-    pib: number,
+    id: number,
+    pib: string,
     naziv: string,
     adresa: string,
     email: string,
@@ -54,17 +58,18 @@ export const SupplierDb = {
     telefon: string
   ) {
     return await Database.executeQuery(
-      'UPDATE dobavljac_view SET naziv = $1, \
+      'UPDATE dobavljac_view SET pib = $8, \
+                           naziv = $1, \
                            adresa = $2, \
                            email = $3, \
                            maticni_broj= $4, \
                            tekuci_racun = ($6, $5), \
                            telefon = $7 \
-                           WHERE pib = $8',
-      [naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon, pib]
+                           WHERE id = $9',
+      [naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon, pib, id]
     );
   },
-  async deleteSupplier(pib: number) {
-    return await Database.executeQuery('DELETE FROM dobavljac_view WHERE pib = $1', [pib]);
+  async deleteSupplier(id: number) {
+    return await Database.executeQuery('DELETE FROM dobavljac_view WHERE id = $1', [id]);
   },
 };

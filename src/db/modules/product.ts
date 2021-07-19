@@ -7,8 +7,9 @@ export const ProductDb = {
               naziv_proizvoda as "nazivProizvoda",\
               trenutna_cena as "trenutnaCena", \
               kolicina, \
-              naziv_tipa_pakovanja as "nazivTipaPakovanja" \
-              FROM proizvod'
+              naziv_tipa_pakovanja as "nazivTipaPakovanja", \
+              id_fabrike as "idFabrike" \
+              FROM proizvod ORDER BY id_proizvoda'
     );
   },
   async getProduct(idProizvoda: number) {
@@ -17,7 +18,8 @@ export const ProductDb = {
               naziv_proizvoda as "nazivProizvoda",\
               trenutna_cena as "trenutnaCena", \
               kolicina, \
-              naziv_tipa_pakovanja as "nazivTipaPakovanja" \
+              naziv_tipa_pakovanja as "nazivTipaPakovanja", \
+              id_fabrike as "idFabrike" \
               FROM proizvod \
               WHERE id_proizvoda = ?$1',
       [idProizvoda]
@@ -28,11 +30,12 @@ export const ProductDb = {
     nazivProizvoda: string,
     trenutnaCena: number,
     kolicina: number,
-    nazivTipaPakovanja: string
+    nazivTipaPakovanja: string,
+    idFabrike: number
   ) {
     return await Database.executeQuery(
-      'INSERT INTO proizvod(id_proizvoda, naziv_proizvoda, trenutna_cena, kolicina, naziv_tipa_pakovanja) VALUES($1, $2, $3, $4, $5)',
-      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja]
+      'INSERT INTO proizvod(id_proizvoda, naziv_proizvoda, trenutna_cena, kolicina, naziv_tipa_pakovanja, id_fabrike) VALUES($1, $2, $3, $4, $5, $6)',
+      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja, idFabrike]
     );
   },
   async updateProduct(
@@ -41,16 +44,18 @@ export const ProductDb = {
     nazivProizvoda: string,
     trenutnaCena: number,
     kolicina: number,
-    nazivTipaPakovanja: string
+    nazivTipaPakovanja: string,
+    idFabrike: number
   ) {
     return await Database.executeQuery(
       'UPDATE proizvod SET id_proizvoda = $1, \
                            naziv_proizvoda = $2, \
                            trenutna_cena = $3, \
                            kolicina= $4, \
-                           naziv_tipa_pakovanja = $5 \
-                           WHERE id_proizvoda = $6',
-      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja, id]
+                           naziv_tipa_pakovanja = $5, \
+                           id_fabrike = $6 \
+                           WHERE id_proizvoda = $7',
+      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja, idFabrike, id]
     );
   },
   async deleteProduct(idProizvoda: number) {
