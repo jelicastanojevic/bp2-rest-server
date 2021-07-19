@@ -6,12 +6,29 @@ export class Drug {
     private jkl: string,
     private packageId: number,
     private measurementUnitId: number
-  ) {
-    this.drugId = drugId;
-    this.dosePerPackage = dosePerPackage;
-    this.piecesPerPackage = piecesPerPackage;
-    this.jkl = jkl;
-    this.packageId = packageId;
-    this.measurementUnitId = measurementUnitId;
+  ) {}
+
+  getDrugId() {
+    return this.drugId;
+  }
+
+  getDosePerPackage() {
+    return this.dosePerPackage;
+  }
+
+  getPiecesPerPackage() {
+    return this.piecesPerPackage;
+  }
+
+  getJKL() {
+    return this.jkl;
+  }
+
+  getPackageId() {
+    return this.packageId;
+  }
+
+  getMeasurementUnitId() {
+    return this.measurementUnitId;
   }
 }

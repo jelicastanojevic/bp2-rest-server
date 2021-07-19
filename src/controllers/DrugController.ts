@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { DrugDb } from '../db/modules/drug';
+import { Drug } from '../models/Drug';
 import { DrugService } from '../services/DrugService';
 
 const logger = getLogger('DrugController.ts');
@@ -17,7 +17,7 @@ interface IDrugController {
 export const DrugController: IDrugController = {
   async getDrugs(req, res) {
     try {
-      const drugs = await DrugDb.getDrugs();
+      const drugs = await DrugService.getDrugs();
       const tableColumns = [
         'RB',
         'Šifra leka',
@@ -39,7 +39,7 @@ export const DrugController: IDrugController = {
   async getDrug(req, res) {
     try {
       let { id } = req.params;
-      const drug = await DrugDb.getDrug(id);
+      const drug = await DrugService.getDrug(id);
 
       return res.status(200).send({ drug });
     } catch (error) {
@@ -51,22 +51,15 @@ export const DrugController: IDrugController = {
   },
   async insertDrug(req, res) {
     try {
-      let {
-        idLeka,
-        dozaPoPakovanju,
-        komadPoPakovanju,
-        jkl,
-        idTipaPakovanja,
-        idJediniceMere,
-      } = req.body;
-      const { insertId } = await DrugDb.insertDrug(
-        idLeka,
-        dozaPoPakovanju,
-        komadPoPakovanju,
-        jkl,
-        idTipaPakovanja,
-        idJediniceMere
+      const drug = new Drug(
+        req.body.idLeka,
+        req.body.dozaPoPakovanju,
+        req.body.komadPoPakovanju,
+        req.body.jkl,
+        req.body.idTipaPakovanja,
+        req.body.idJediniceMere
       );
+      const { insertId } = await DrugService.insertDrug(drug);
 
       return res.status(201).send({ insertId });
     } catch (error) {
@@ -79,25 +72,19 @@ export const DrugController: IDrugController = {
   async updateDrug(req, res) {
     try {
       let { id } = req.params;
-      let {
-        idLeka,
-        dozaPoPakovanju,
-        komadPoPakovanju,
-        jkl,
-        idTipaPakovanja,
-        idJediniceMere,
-      } = req.body;
-      const drug = await DrugDb.updateDrug(
-        id,
-        idLeka,
-        dozaPoPakovanju,
-        komadPoPakovanju,
-        jkl,
-        idTipaPakovanja,
-        idJediniceMere
+
+      const drug = new Drug(
+        req.body.idLeka,
+        req.body.dozaPoPakovanju,
+        req.body.komadPoPakovanju,
+        req.body.jkl,
+        req.body.idTipaPakovanja,
+        req.body.idJediniceMere
       );
 
-      return res.status(200).send({ drug });
+      const updatedDrug = await DrugService.updateDrug(id, drug);
+
+      return res.status(200).send({ updatedDrug });
     } catch (error) {
       logger.error(error);
       return res
