@@ -1,8 +1,9 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
 
 export const DrugDb = {
-  async getDrugs() {
-    return await Database.executeQuery(
+  getDrugs() {
+    return Database.executeQuery(
       'SELECT id_leka as "idLeka", \
               doza_po_pakovanju as "dozaPoPakovanju", \
               komad_po_pakovanju as "komadPoPakovanju", \
@@ -12,8 +13,8 @@ export const DrugDb = {
        FROM lek'
     );
   },
-  async getDrug(idLeka: number) {
-    return await Database.executeQuery(
+  getDrug(idLeka: number) {
+    return Database.executeQuery(
       'SELECT id_leka as idLeka, \
               doza_po_pakovanju as "dozaPoPakovanju", \
               komad_po_pakovanju as "komadPoPakovanju", \
@@ -24,7 +25,7 @@ export const DrugDb = {
       [idLeka]
     );
   },
-  async insertDrug(
+  insertDrug(
     idLeka: number,
     dozaPoPakovanju: number,
     komadPoPakovanju: number,
@@ -32,12 +33,12 @@ export const DrugDb = {
     idTipaPakovanja: number,
     idJediniceMere: number
   ) {
-    return await Database.executeQuery(
+    return Database.executeQuery(
       'INSERT INTO lek(id_leka, doza_po_pakovanju, komad_po_pakovanju, jkl, id_tipa_pakovanja, id_jedinice_mere) VALUES($1, $2, $3, $4, $5, $6)',
       [idLeka, dozaPoPakovanju, komadPoPakovanju, jkl, idTipaPakovanja, idJediniceMere]
     );
   },
-  async updateDrug(
+  updateDrug(
     id: number,
     idLeka: number,
     dozaPoPakovanju: number,
@@ -46,12 +47,16 @@ export const DrugDb = {
     idTipaPakovanja: number,
     idJediniceMere: number
   ) {
-    return await Database.executeQuery(
+    return Database.executeQuery(
       'UPDATE lek SET id_leka = $1, doza_po_pakovanju = $2, komad_po_pakovanju = $3, jkl = $4, id_tipa_pakovanja = $5, id_jedinice_mere = $6 WHERE id_leka = $7',
       [idLeka, dozaPoPakovanju, komadPoPakovanju, jkl, idTipaPakovanja, idJediniceMere, id]
     );
   },
-  async deleteDrug(idLeka: number) {
-    return await Database.executeQuery('DELETE FROM lek WHERE id_leka = $1', [idLeka]);
+  async deleteDrug(drugId: number) {
+    const result = await Database.executeQuery('DELETE FROM lek WHERE id_leka = $1', [drugId]);
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Drug not found!');
+    }
   },
 };

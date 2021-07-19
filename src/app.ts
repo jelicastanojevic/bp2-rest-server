@@ -10,8 +10,6 @@ import { productRoutes } from './routes/productRoutes';
 import { stateRoutes } from './routes/stateRoutes';
 import { supplierRoutes } from './routes/supplierRoutes';
 
-// Controllers (route handlers)
-// API keys and Passport configuration
 // Create Express server
 const app: express.Application = express();
 

@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
 import { DrugDb } from '../db/modules/drug';
+import { DrugService } from '../services/DrugService';
 
 const logger = getLogger('PackageController.ts');
 
@@ -67,7 +68,7 @@ export const DrugController: IDrugController = {
         idJediniceMere
       );
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -107,9 +108,9 @@ export const DrugController: IDrugController = {
   async deleteDrug(req, res) {
     try {
       let { id } = req.params;
-      const drug = await DrugDb.deleteDrug(id);
+      await DrugService.deleteDrug(id);
 
-      return res.status(200).send({ drug });
+      return res.sendStatus(204);
     } catch (error) {
       logger.error(error);
       return res
