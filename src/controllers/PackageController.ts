@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { PackageDb } from '../db/modules/package';
+import { Package } from '../models/Package';
+import { PackageService } from '../services/PackageService';
 
 const logger = getLogger('PackageController.ts');
 
@@ -16,7 +17,7 @@ interface IPackageController {
 export const PackageController: IPackageController = {
   async getPackages(req, res) {
     try {
-      const packages = await PackageDb.getPackages();
+      const packages = await PackageService.getPackages();
       const tableColumns = ['RB', 'Šifra pakovanja', 'Naziv'];
 
       return res.status(200).send({ tableColumns: tableColumns, tableData: packages.rows });
@@ -30,9 +31,9 @@ export const PackageController: IPackageController = {
   async getPackage(req, res) {
     try {
       let { id } = req.params;
-      const packagee = await PackageDb.getPackage(id);
+      const drugPackage = await PackageService.getPackage(id);
 
-      return res.status(200).send({ packagee });
+      return res.status(200).send({ drugPackage });
     } catch (error) {
       logger.error(error);
       return res
@@ -42,10 +43,10 @@ export const PackageController: IPackageController = {
   },
   async insertPackage(req, res) {
     try {
-      let { idTipaPakovanja, nazivTipaPakovanja } = req.body;
-      const { insertId } = await PackageDb.insertPackage(idTipaPakovanja, nazivTipaPakovanja);
+      const drugPackage = new Package(req.body.packageId, req.body.name);
+      const { insertId } = await PackageService.insertPackage(drugPackage);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -56,10 +57,10 @@ export const PackageController: IPackageController = {
   async updatePackage(req, res) {
     try {
       let { id } = req.params;
-      let { idTipaPakovanja, nazivTipaPakovanja } = req.body;
-      const packagee = await PackageDb.updatePackage(id, idTipaPakovanja, nazivTipaPakovanja);
+      const drugPackage = new Package(req.body.packageId, req.body.name);
+      const updatedPackage = await PackageService.updatePackage(id, drugPackage);
 
-      return res.status(200).send({ packagee });
+      return res.status(200).send({ updatedPackage });
     } catch (error) {
       logger.error(error);
       return res
@@ -70,9 +71,9 @@ export const PackageController: IPackageController = {
   async deletePackage(req, res) {
     try {
       let { id } = req.params;
-      const packagee = await PackageDb.deletePackage(id);
+      const drugPackage = await PackageService.deletePackage(id);
 
-      return res.status(200).send({ packagee });
+      return res.status(200).send({ drugPackage });
     } catch (error) {
       logger.error(error);
       return res
