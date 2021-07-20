@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { ItemProductDb } from '../db/modules/itemProduct';
+import { ItemProduct } from '../models/ItemProduct';
+import { ItemProductService } from '../services/ItemProductService';
 
 const logger = getLogger('ItemProductController.ts');
 
@@ -16,7 +17,7 @@ interface IItemProductController {
 export const ItemProductController: IItemProductController = {
   async getItemProducts(req, res) {
     try {
-      const itemProducts = await ItemProductDb.getItemProducts();
+      const itemProducts = await ItemProductService.getItemProducts();
       const tableColumns = ['RB', 'Šifra kataloga', 'Redni broj stavke', 'Šifra proizvoda'];
 
       return res.status(200).send({ tableColumns: tableColumns, tableData: itemProducts.rows });
@@ -29,9 +30,9 @@ export const ItemProductController: IItemProductController = {
   },
   async getItemProduct(req, res) {
     try {
-      let { id } = req.params;
-      let { rbStavke } = req.body;
-      const itemProduct = await ItemProductDb.getItemProduct(id, rbStavke);
+      let { catalogueId } = req.params;
+      let { itemSeqNum } = req.body;
+      const itemProduct = await ItemProductService.getItemProduct(catalogueId, itemSeqNum);
 
       return res.status(200).send({ itemProduct });
     } catch (error) {
@@ -43,10 +44,14 @@ export const ItemProductController: IItemProductController = {
   },
   async insertItemProduct(req, res) {
     try {
-      let { idKataloga, rbStavke, idProizvoda } = req.body;
-      const { insertId } = await ItemProductDb.insertItemProduct(idKataloga, rbStavke, idProizvoda);
+      const itemProduct = new ItemProduct(
+        req.body.catalogueId,
+        req.body.itemSeqNum,
+        req.body.productId
+      );
+      const { insertId } = await ItemProductService.insertItemProduct(itemProduct);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -56,11 +61,14 @@ export const ItemProductController: IItemProductController = {
   },
   async updateItemProduct(req, res) {
     try {
-      let { id } = req.params;
-      let { rbStavke, idProizvoda } = req.body;
-      const itemProduct = await ItemProductDb.updateItemProduct(id, rbStavke, idProizvoda);
+      const itemProduct = new ItemProduct(
+        req.params.catalogueId,
+        req.body.itemSeqNum,
+        req.body.productId
+      );
+      const updatedItemProduct = await ItemProductService.updateItemProduct(itemProduct);
 
-      return res.status(200).send({ itemProduct });
+      return res.status(200).send({ updatedItemProduct });
     } catch (error) {
       logger.error(error);
       return res
@@ -70,9 +78,9 @@ export const ItemProductController: IItemProductController = {
   },
   async deleteItemProduct(req, res) {
     try {
-      let { id } = req.params;
-      let { rbStavke } = req.body;
-      const itemProduct = await ItemProductDb.deleteItemProduct(id, rbStavke);
+      let { catalogueId } = req.params;
+      let { itemSeqNum } = req.body;
+      const itemProduct = await ItemProductService.deleteItemProduct(catalogueId, itemSeqNum);
 
       return res.status(200).send({ itemProduct });
     } catch (error) {

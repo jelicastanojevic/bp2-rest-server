@@ -1,39 +1,55 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
+import { ItemProduct } from '../../models/ItemProduct';
 
 export const ItemProductDb = {
   async getItemProducts() {
     return await Database.executeQuery(
-      'SELECT id_kataloga as "idKataloga", \
-              rb_stavke as "rbStavke", \
-              id_proizvoda as "idProizvoda" \
+      'SELECT id_kataloga as "catalogueId", \
+              rb_stavke as "itemSeqNum", \
+              id_proizvoda as "productId" \
        FROM stavka_proizvod'
     );
   },
-  async getItemProduct(idKataloga: number, rbStavke: number) {
-    return await Database.executeQuery(
-      'SELECT id_kataloga as "idKataloga", \
-              rb_stavke as "rbStavke", \
-              id_proizvoda as "idProizvoda" \
+  async getItemProduct(catalogueId: number, itemSeqNum: number) {
+    const itemProduct = await Database.executeQuery(
+      'SELECT id_kataloga as "catalogueId", \
+              rb_stavke as "itemSeqNum", \
+              id_proizvoda as "productId" \
               FROM stavka_proizvod WHERE id_kataloga = $1 and rb_stavke = $2',
-      [idKataloga, rbStavke]
+      [catalogueId, itemSeqNum]
     );
+
+    if (!itemProduct) {
+      throw new HttpError(404, 'Product not found!');
+    }
+
+    return itemProduct;
   },
-  async insertItemProduct(idKataloga: number, rbStavke: number, idProizvoda: number) {
+  async insertItemProduct(itemProduct: ItemProduct) {
     return await Database.executeQuery(
       'INSERT INTO stavka_proizvod(id_kataloga, rb_stavke, id_proizvoda) VALUES($1, $2, $3)',
-      [idKataloga, rbStavke, idProizvoda]
+      [itemProduct.getCatalogueId(), itemProduct.getItemSeqNum(), itemProduct.getProductId()]
     );
   },
-  async updateItemProduct(idKataloga: number, rbStavke: number, idProizvoda: number) {
-    return await Database.executeQuery(
+  async updateItemProduct(itemProduct: ItemProduct) {
+    const result = await Database.executeQuery(
       'UPDATE stavka_proizvod SET id_proizvoda = $1 WHERE id_kataloga = $2 AND rb_stavke=$3',
-      [idProizvoda, idKataloga, rbStavke]
+      [itemProduct.getProductId(), itemProduct.getCatalogueId(), itemProduct.getItemSeqNum()]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Product not found!');
+    }
   },
-  async deleteItemProduct(idKataloga: number, rbStavke: number) {
-    return await Database.executeQuery(
+  async deleteItemProduct(catalogueId: number, itemSeqNum: number) {
+    const result = await Database.executeQuery(
       'DELETE FROM stavka_proizvod WHERE id_kataloga = $1 AND rb_stavke = $2',
-      [idKataloga, rbStavke]
+      [catalogueId, itemSeqNum]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Product not found!');
+    }
   },
 };
