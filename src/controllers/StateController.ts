@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
 import { StateDb } from '../db/modules/state';
+import { State } from '../models/State';
 
 const logger = getLogger('StateController.ts');
 
@@ -25,7 +26,6 @@ export const StateController: IStateController = {
         'Količina',
       ];
 
-      console.log(states);
       return res.status(200).send({ tableColumns: tableColumns, tableData: states.rows });
     } catch (error) {
       logger.error(error);
@@ -36,15 +36,15 @@ export const StateController: IStateController = {
   },
   async insertState(req, res) {
     try {
-      let { idProizvoda, idSkladisneJedinice, datumPromene, kolicina } = req.body;
-      const { insertId } = await StateDb.insertState(
-        idProizvoda,
-        idSkladisneJedinice,
-        datumPromene,
-        kolicina
+      const state = new State(
+        req.body.productId,
+        req.body.warehouseId,
+        req.body.dateOfChange,
+        req.body.amount
       );
+      const { insertId } = await StateDb.insertState(state);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -54,9 +54,9 @@ export const StateController: IStateController = {
   },
   async getState(req, res) {
     try {
-      let { id } = req.params;
-      let { idSkladisneJedinice, datumPromene } = req.body;
-      const state = await StateDb.getState(id, idSkladisneJedinice, datumPromene);
+      let { productId } = req.params;
+      let { warehouseId, dateOfChange } = req.body;
+      const state = await StateDb.getState(productId, warehouseId, dateOfChange);
 
       return res.status(200).send({ state });
     } catch (error) {
@@ -68,11 +68,15 @@ export const StateController: IStateController = {
   },
   async updateState(req, res) {
     try {
-      let { id } = req.params;
-      let { idSkladisneJedinice, datumPromene, cena } = req.body;
-      const state = await StateDb.updateState(id, idSkladisneJedinice, datumPromene, cena);
+      const state = new State(
+        req.params.productId,
+        req.body.warehouseId,
+        req.body.dateOfChange,
+        req.body.amount
+      );
+      const updatedState = await StateDb.updateState(state);
 
-      return res.status(200).send({ state });
+      return res.status(200).send({ updatedState });
     } catch (error) {
       logger.error(error);
       return res
@@ -82,9 +86,9 @@ export const StateController: IStateController = {
   },
   async deleteState(req, res) {
     try {
-      let { id } = req.params;
-      let { idSkladisneJedinice, datumPromene } = req.body;
-      const state = await StateDb.deleteState(id, idSkladisneJedinice, datumPromene);
+      let { productId } = req.params;
+      let { warehouseId, dateOfChange } = req.body;
+      const state = await StateDb.deleteState(productId, warehouseId, dateOfChange);
 
       return res.status(200).send({ state });
     } catch (error) {

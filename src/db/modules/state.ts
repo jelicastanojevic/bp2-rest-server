@@ -1,53 +1,58 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
+import { State } from '../../models/State';
 
 export const StateDb = {
   async getStates() {
     return await Database.executeQuery(
-      'SELECT id_proizvoda as "idProizvoda", \
-              id_skladisne_jedinice as "idSkladisneJedinice",\
-              datum_promene as "datumPromene",\
-              kolicina \
+      'SELECT id_proizvoda as "productId", \
+              id_skladisne_jedinice as "warehouseId",\
+              datum_promene as "dateOfChange",\
+              kolicina as "amount"\
               FROM stanje'
     );
   },
-  async getState(idProizvoda: number, idSkladisneJedinice: number, datumPromene: Date) {
-    return await Database.executeQuery(
-      'SELECT id_proizvoda as "idProizvoda", \
-              id_skladisne_jedinice as "idSkladisneJedinice",\
-              datum_promene as "datumPromene",\
-              kolicina \
+  async getState(productId: number, warehouseId: number, dateOfChange: string) {
+    const state = await Database.executeQuery(
+      'SELECT id_proizvoda as "productId", \
+              id_skladisne_jedinice as "warehouseId",\
+              datum_promene as "dateOfChange",\
+              kolicina as "amount"\
               FROM stanje\
               WHERE id_proizvoda = $1 AND id_skladisne_jedinice = $2 AND datum_promene = $3',
-      [idProizvoda, idSkladisneJedinice, datumPromene]
+      [productId, warehouseId, dateOfChange]
     );
+
+    if (!state) {
+      throw new HttpError(404, 'State not found!');
+    }
+    return state;
   },
-  async insertState(
-    idProizvoda: number,
-    idSkladisneJedinice: number,
-    datumPromene: Date,
-    kolicina: number
-  ) {
+  async insertState(state: State) {
     return await Database.executeQuery(
       'INSERT INTO stanje(id_proizvoda, id_skladisne_jedinice, datum_promene, kolicina) VALUES($1, $2, $3, $4)',
-      [idProizvoda, idSkladisneJedinice, datumPromene, kolicina]
+      [state.getProductId(), state.getWarehouseId(), state.getDateOfChange(), state.getAmount()]
     );
   },
-  async updateState(
-    id: number,
-    idSkladisneJedinice: number,
-    datumPromene: string,
-    kolicina: number
-  ) {
-    return await Database.executeQuery(
+  async updateState(state: State) {
+    const result = await Database.executeQuery(
       'UPDATE stanje SET  kolicina = $1, \
                            WHERE id_proizvoda = $2 and id_skladisne_jedinice = $3 and datum_promene = $4',
-      [kolicina, id, idSkladisneJedinice, datumPromene]
+      [state.getAmount(), state.getProductId(), state.getWarehouseId(), state.getDateOfChange()]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'State not found!');
+    }
   },
-  async deleteState(idProizvoda: number, idSkladisneJedinice: number, datumPromene: string) {
-    return await Database.executeQuery(
+  async deleteState(productId: number, warehouseId: number, dateOfChange: string) {
+    const result = await Database.executeQuery(
       'DELETE FROM stanje WHERE id_proizvoda = $1 and id_skladisne_jedinice = $2 and datum_promene = $3',
-      [idProizvoda, idSkladisneJedinice, datumPromene]
+      [productId, warehouseId, dateOfChange]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'State not found!');
+    }
   },
 };
