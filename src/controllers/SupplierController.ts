@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { SupplierDb } from '../db/modules/supplier';
+import { Supplier } from '../models/Supplier';
+import { SupplierService } from '../services/SupplierService';
 
 const logger = getLogger('SupplierController.ts');
 
@@ -16,7 +17,7 @@ interface ISupplierController {
 export const SupplierController: ISupplierController = {
   async getSuppliers(req, res) {
     try {
-      const suppliers = await SupplierDb.getSuppliers();
+      const suppliers = await SupplierService.getSuppliers();
       const tableColumns = [
         'RB',
         'ID',
@@ -30,7 +31,6 @@ export const SupplierController: ISupplierController = {
         'Telefon',
       ];
 
-      console.log(suppliers);
       return res.status(200).send({ tableColumns: tableColumns, tableData: suppliers.rows });
     } catch (error) {
       logger.error(error);
@@ -41,30 +41,20 @@ export const SupplierController: ISupplierController = {
   },
   async insertSupplier(req, res) {
     try {
-      let {
-        id,
-        pib,
-        naziv,
-        adresa,
-        email,
-        maticniBroj,
-        nazivBanke,
-        brojRacuna,
-        telefon,
-      } = req.body;
-      const { insertId } = await SupplierDb.insertSupplier(
-        id,
-        pib,
-        naziv,
-        adresa,
-        email,
-        maticniBroj,
-        nazivBanke,
-        brojRacuna,
-        telefon
+      const supplier = new Supplier(
+        req.body.id,
+        req.body.pib,
+        req.body.name,
+        req.body.address,
+        req.body.email,
+        req.body.nationalId,
+        req.body.bankName,
+        req.body.bankAccountNumber,
+        req.body.telephoneNumber
       );
+      const { insertId } = await SupplierService.insertSupplier(supplier);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -75,7 +65,7 @@ export const SupplierController: ISupplierController = {
   async getSupplier(req, res) {
     try {
       let { id } = req.params;
-      const supplier = await SupplierDb.getSupplier(id);
+      const supplier = await SupplierService.getSupplier(id);
 
       return res.status(200).send({ supplier });
     } catch (error) {
@@ -87,21 +77,20 @@ export const SupplierController: ISupplierController = {
   },
   async updateSupplier(req, res) {
     try {
-      let { id } = req.params;
-      let { pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon } = req.body;
-      const supplier = await SupplierDb.updateSupplier(
-        id,
-        pib,
-        naziv,
-        adresa,
-        email,
-        maticniBroj,
-        nazivBanke,
-        brojRacuna,
-        telefon
+      const supplier = new Supplier(
+        req.params.id,
+        req.body.pib,
+        req.body.name,
+        req.body.address,
+        req.body.email,
+        req.body.nationalId,
+        req.body.bankName,
+        req.body.bankAccountNumber,
+        req.body.telephoneNumber
       );
+      const updatedSupplier = await SupplierService.updateSupplier(supplier);
 
-      return res.status(200).send({ supplier });
+      return res.status(200).send({ updatedSupplier });
     } catch (error) {
       logger.error(error);
       return res
@@ -112,7 +101,7 @@ export const SupplierController: ISupplierController = {
   async deleteSupplier(req, res) {
     try {
       let { id } = req.params;
-      const supplier = await SupplierDb.deleteSupplier(id);
+      const supplier = await SupplierService.deleteSupplier(id);
 
       return res.status(200).send({ supplier });
     } catch (error) {

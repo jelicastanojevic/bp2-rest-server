@@ -1,75 +1,90 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
+import { Supplier } from '../../models/Supplier';
 
 export const SupplierDb = {
   async getSuppliers() {
     return await Database.executeQuery(
       'SELECT id, \
               pib, \
-              naziv,\
-              adresa, \
+              naziv as "name",\
+              adresa as "address", \
               email, \
-              maticni_broj as "maticniBroj", \
-              (tekuci_racun).naziv_banke as "nazivBanke", \
-              (tekuci_racun).broj_racuna as "brojRacuna", \
-              telefon \
+              maticni_broj as "nationalId", \
+              (tekuci_racun).naziv_banke as "bankName", \
+              (tekuci_racun).broj_racuna as "bankAccountName", \
+              telefon as "telephoneNumber" \
               FROM dobavljac_view'
     );
   },
   async getSupplier(id: string) {
-    return await Database.executeQuery(
+    const supplier = await Database.executeQuery(
       'SELECT id, \
               pib, \
-              naziv,\
-              adresa, \
+              naziv as "name",\
+              adresa as "address", \
               email, \
-              maticni_broj as "maticniBroj", \
-              (tekuci_racun).naziv_banke as "nazivBanke", \
-              (tekuci_racun).broj_racuna as "brojRacuna", \
-              telefon \
+              maticni_broj as "nationalId", \
+              (tekuci_racun).naziv_banke as "bankName", \
+              (tekuci_racun).broj_racuna as "bankAccountName", \
+              telefon as "telephoneNumber"\
               FROM dobavljac_view WHERE id = $1',
       [id]
     );
+
+    if (!supplier) {
+      throw new HttpError(404, 'Supplier not found!');
+    }
+    return supplier;
   },
-  async insertSupplier(
-    id: number,
-    pib: string,
-    naziv: string,
-    adresa: string,
-    email: string,
-    maticniBroj: string,
-    nazivBanke: string,
-    brojRacuna: string,
-    telefon: string
-  ) {
+  async insertSupplier(supplier: Supplier) {
     return await Database.executeQuery(
       'INSERT INTO dobavljac_view(id, pib, naziv, adresa, email, maticni_broj, tekuci_racun, telefon) VALUES($1, $2, $3, $4, $5, $6, ($8, $7), $9)',
-      [id, pib, naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon]
+      [
+        supplier.getId(),
+        supplier.getPib(),
+        supplier.getName(),
+        supplier.getAddress(),
+        supplier.getEmail(),
+        supplier.getNationalId(),
+        supplier.getBankName(),
+        supplier.getBankAccountNumber(),
+        supplier.getTelephoneNumber(),
+      ]
     );
   },
-  async updateSupplier(
-    id: number,
-    pib: string,
-    naziv: string,
-    adresa: string,
-    email: string,
-    maticniBroj: string,
-    nazivBanke: string,
-    brojRacuna: string,
-    telefon: string
-  ) {
-    return await Database.executeQuery(
-      'UPDATE dobavljac_view SET pib = $8, \
-                           naziv = $1, \
-                           adresa = $2, \
-                           email = $3, \
-                           maticni_broj= $4, \
-                           tekuci_racun = ($6, $5), \
-                           telefon = $7 \
+  async updateSupplier(supplier: Supplier) {
+    const result = await Database.executeQuery(
+      'UPDATE dobavljac_view SET pib = $1, \
+                           naziv = $2, \
+                           adresa = $3, \
+                           email = $4, \
+                           maticni_broj= $5, \
+                           tekuci_racun = ($7, $6), \
+                           telefon = $8 \
                            WHERE id = $9',
-      [naziv, adresa, email, maticniBroj, nazivBanke, brojRacuna, telefon, pib, id]
+      [
+        supplier.getPib(),
+        supplier.getName(),
+        supplier.getAddress(),
+        supplier.getEmail(),
+        supplier.getNationalId(),
+        supplier.getBankName(),
+        supplier.getBankAccountNumber(),
+        supplier.getTelephoneNumber(),
+        supplier.getId(),
+      ]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Supplier not found!');
+    }
   },
   async deleteSupplier(id: number) {
-    return await Database.executeQuery('DELETE FROM dobavljac_view WHERE id = $1', [id]);
+    const result = await Database.executeQuery('DELETE FROM dobavljac_view WHERE id = $1', [id]);
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Supplier not found!');
+    }
   },
 };
