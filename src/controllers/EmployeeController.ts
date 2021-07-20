@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { EmployeeDb } from '../db/modules/employee';
+import { Employee } from '../models/Employee';
+import { EmployeeService } from '../services/EmployeeService';
 
 const logger = getLogger('EmployeeController.ts');
 
@@ -16,7 +17,7 @@ interface IEmployeeController {
 export const EmployeeController: IEmployeeController = {
   async getEmployees(req, res) {
     try {
-      const catalogues = await EmployeeDb.getEmployees();
+      const employees = await EmployeeService.getEmployees();
       const tableColumns = [
         'RB',
         'Šifra zaposlenog',
@@ -29,7 +30,7 @@ export const EmployeeController: IEmployeeController = {
         'Tip zaposlenog',
       ];
 
-      return res.status(200).send({ tableColumns: tableColumns, tableData: catalogues.rows });
+      return res.status(200).send({ tableColumns: tableColumns, tableData: employees.rows });
     } catch (error) {
       logger.error(error);
       return res
@@ -40,9 +41,9 @@ export const EmployeeController: IEmployeeController = {
   async getEmployee(req, res) {
     try {
       let { id } = req.params;
-      const catalogue = await EmployeeDb.getEmployee(id);
+      const employee = await EmployeeService.getEmployee(id);
 
-      return res.status(200).send({ catalogue });
+      return res.status(200).send({ employee });
     } catch (error) {
       logger.error(error);
       return res
@@ -52,17 +53,17 @@ export const EmployeeController: IEmployeeController = {
   },
   async insertEmployee(req, res) {
     try {
-      let { idZaposlenog, ime, prezime, adresa, email, telefon, jmbg, tipZaposlenog } = req.body;
-      const { insertId } = await EmployeeDb.insertEmployee(
-        idZaposlenog,
-        ime,
-        prezime,
-        adresa,
-        email,
-        telefon,
-        jmbg,
-        tipZaposlenog
+      const employee = new Employee(
+        req.body.id,
+        req.body.name,
+        req.body.surname,
+        req.body.address,
+        req.body.email,
+        req.body.telephoneNumber,
+        req.body.jmbg,
+        req.body.typeOfEmployee
       );
+      const { insertId } = await EmployeeService.insertEmployee(employee);
 
       return res.status(200).send({ insertId });
     } catch (error) {
@@ -74,20 +75,19 @@ export const EmployeeController: IEmployeeController = {
   },
   async updateEmployee(req, res) {
     try {
-      let { id } = req.params;
-      let { ime, prezime, adresa, email, telefon, jmbg, tipZaposlenog } = req.body;
-      const employee = await EmployeeDb.updateEmployee(
-        id,
-        ime,
-        prezime,
-        adresa,
-        email,
-        telefon,
-        jmbg,
-        tipZaposlenog
+      const employee = new Employee(
+        req.params.id,
+        req.body.name,
+        req.body.surname,
+        req.body.address,
+        req.body.email,
+        req.body.telephoneNumber,
+        req.body.jmbg,
+        req.body.typeOfEmployee
       );
+      const updatedEmployee = await EmployeeService.updateEmployee(employee);
 
-      return res.status(200).send({ employee });
+      return res.status(200).send({ updatedEmployee });
     } catch (error) {
       logger.error(error);
       return res
@@ -98,7 +98,7 @@ export const EmployeeController: IEmployeeController = {
   async deleteEmployee(req, res) {
     try {
       let { id } = req.params;
-      const employee = await EmployeeDb.deleteEmployee(id);
+      const employee = await EmployeeService.deleteEmployee(id);
 
       return res.status(200).send({ employee });
     } catch (error) {
