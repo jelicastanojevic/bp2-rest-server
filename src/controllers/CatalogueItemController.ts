@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { CatalogueItemDb } from '../db/modules/catalogueItem';
+import { CatalogueItem } from '../models/CatalogueItem';
+import { CatalogueItemService } from '../services/CatalogueItemService';
 
 const logger = getLogger('CatalogueItemController.ts');
 
@@ -16,7 +17,7 @@ interface ICatalogueItemController {
 export const CatalogueItemController: ICatalogueItemController = {
   async getCatalogueItems(req, res) {
     try {
-      const catalogueItems = await CatalogueItemDb.getCatalogueItems();
+      const catalogueItems = await CatalogueItemService.getCatalogueItems();
       const tableColumns = [
         'RB',
         'Šifra kataloga',
@@ -40,7 +41,7 @@ export const CatalogueItemController: ICatalogueItemController = {
     try {
       let { id } = req.params;
       let { rbStavke } = req.body;
-      const catalogueItem = await CatalogueItemDb.getCatalogueItem(id, rbStavke);
+      const catalogueItem = await CatalogueItemService.getCatalogueItem(id, rbStavke);
 
       return res.status(200).send({ catalogueItem });
     } catch (error) {
@@ -52,16 +53,16 @@ export const CatalogueItemController: ICatalogueItemController = {
   },
   async insertCatalogueItem(req, res) {
     try {
-      let { idKataloga, rbStavke, naziv, cena, jm, popust, idFabrike } = req.body;
-      const { insertId } = await CatalogueItemDb.insertCatalogueItem(
-        idKataloga,
-        rbStavke,
-        naziv,
-        cena,
-        jm,
-        popust,
-        idFabrike
+      const catalogueItem = new CatalogueItem(
+        req.body.catalogueId,
+        req.body.itemSeqNum,
+        req.body.name,
+        req.body.price,
+        req.body.measurementUnit,
+        req.body.discount,
+        req.body.factoryId
       );
+      const { insertId } = await CatalogueItemService.insertCatalogueItem(catalogueItem);
 
       return res.status(200).send({ insertId });
     } catch (error) {
@@ -73,19 +74,19 @@ export const CatalogueItemController: ICatalogueItemController = {
   },
   async updateCatalogueItem(req, res) {
     try {
-      let { id } = req.params;
-      let { rbStavke, naziv, cena, jm, popust, idFabrike } = req.body;
-      const catalogueItem = await CatalogueItemDb.updateCatalogueItem(
-        id,
-        rbStavke,
-        naziv,
-        cena,
-        jm,
-        popust,
-        idFabrike
+      const catalogueItem = new CatalogueItem(
+        req.params.catalogueId,
+        req.body.itemSeqNum,
+        req.body.name,
+        req.body.price,
+        req.body.measurementUnit,
+        req.body.discount,
+        req.body.factoryId
       );
 
-      return res.status(200).send({ catalogueItem });
+      const updatedCatalogueItem = await CatalogueItemService.updateCatalogueItem(catalogueItem);
+
+      return res.status(200).send({ updatedCatalogueItem });
     } catch (error) {
       logger.error(error);
       return res
@@ -95,9 +96,9 @@ export const CatalogueItemController: ICatalogueItemController = {
   },
   async deleteCatalogueItem(req, res) {
     try {
-      let { id } = req.params;
-      let { rbStavke } = req.body;
-      const catalogueItem = await CatalogueItemDb.deleteCatalogueItem(id, rbStavke);
+      let { catalogueId } = req.params;
+      let { itemSeqNum } = req.body;
+      const catalogueItem = await CatalogueItemService.deleteCatalogueItem(catalogueId, itemSeqNum);
 
       return res.status(200).send({ catalogueItem });
     } catch (error) {

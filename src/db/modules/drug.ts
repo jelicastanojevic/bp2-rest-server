@@ -36,7 +36,7 @@ export const DrugDb = {
     return Database.executeQuery(
       'INSERT INTO lek(id_leka, doza_po_pakovanju, komad_po_pakovanju, jkl, id_tipa_pakovanja, id_jedinice_mere) VALUES($1, $2, $3, $4, $5, $6)',
       [
-        drug.getDrugId(),
+        drug.getId(),
         drug.getDosePerPackage(),
         drug.getPiecesPerPackage(),
         drug.getJKL(),
@@ -49,7 +49,7 @@ export const DrugDb = {
     const result = await Database.executeQuery(
       'UPDATE lek SET id_leka = $1, doza_po_pakovanju = $2, komad_po_pakovanju = $3, jkl = $4, id_tipa_pakovanja = $5, id_jedinice_mere = $6 WHERE id_leka = $7',
       [
-        drug.getDrugId(),
+        drug.getId(),
         drug.getDosePerPackage(),
         drug.getPiecesPerPackage(),
         drug.getJKL(),
