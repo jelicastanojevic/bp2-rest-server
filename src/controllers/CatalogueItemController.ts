@@ -64,7 +64,7 @@ export const CatalogueItemController: ICatalogueItemController = {
       );
       const { insertId } = await CatalogueItemService.insertCatalogueItem(catalogueItem);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res

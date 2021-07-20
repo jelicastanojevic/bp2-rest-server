@@ -57,7 +57,7 @@ export const CatalogueController: ICatalogueController = {
       );
       const { insertId } = await CatalogueService.insertCatalogue(catalogue);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res

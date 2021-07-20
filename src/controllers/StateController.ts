@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { StateDb } from '../db/modules/state';
 import { State } from '../models/State';
+import { StateService } from '../services/StateService';
 
 const logger = getLogger('StateController.ts');
 
@@ -17,7 +17,7 @@ interface IStateController {
 export const StateController: IStateController = {
   async getStates(req, res) {
     try {
-      const states = await StateDb.getStates();
+      const states = await StateService.getStates();
       const tableColumns = [
         'RB',
         'Šifra proizvoda',
@@ -42,7 +42,7 @@ export const StateController: IStateController = {
         req.body.dateOfChange,
         req.body.amount
       );
-      const { insertId } = await StateDb.insertState(state);
+      const { insertId } = await StateService.insertState(state);
 
       return res.status(201).send({ insertId });
     } catch (error) {
@@ -56,7 +56,7 @@ export const StateController: IStateController = {
     try {
       let { productId } = req.params;
       let { warehouseId, dateOfChange } = req.body;
-      const state = await StateDb.getState(productId, warehouseId, dateOfChange);
+      const state = await StateService.getState(productId, warehouseId, dateOfChange);
 
       return res.status(200).send({ state });
     } catch (error) {
@@ -74,7 +74,7 @@ export const StateController: IStateController = {
         req.body.dateOfChange,
         req.body.amount
       );
-      const updatedState = await StateDb.updateState(state);
+      const updatedState = await StateService.updateState(state);
 
       return res.status(200).send({ updatedState });
     } catch (error) {
@@ -88,7 +88,7 @@ export const StateController: IStateController = {
     try {
       let { productId } = req.params;
       let { warehouseId, dateOfChange } = req.body;
-      const state = await StateDb.deleteState(productId, warehouseId, dateOfChange);
+      const state = await StateService.deleteState(productId, warehouseId, dateOfChange);
 
       return res.status(200).send({ state });
     } catch (error) {
