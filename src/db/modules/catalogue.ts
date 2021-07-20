@@ -1,38 +1,64 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
+import { Catalogue } from '../../models/Catalogue';
 
 export const CatalogueDb = {
   async getCatalogues() {
     return await Database.executeQuery(
-      'SELECT id_kataloga as "idKataloga", \
-              datum, \
-              rb,  \
-              id_dobavljaca as "idDobavljaca" \
+      'SELECT id_kataloga as "id", \
+              datum as "date", \
+              rb as "catalogueSeqNum",  \
+              id_dobavljaca as "supplierId" \
        FROM katalog'
     );
   },
-  async getCatalogue(idKataloga: number) {
-    return await Database.executeQuery(
-      'SELECT id_kataloga as "idKataloga", \
-              datum, \
-              rb , \
-              id_dobavljaca as "idDobavljaca"\
+  async getCatalogue(id: number) {
+    const catalogue = await Database.executeQuery(
+      'SELECT id_kataloga as "id", \
+              datum as "date", \
+              rb as "catalogueSeqNum", \
+              id_dobavljaca as "supplierId"\
        FROM katalog WHERE id_kataloga = $1',
-      [idKataloga]
+      [id]
     );
+
+    if (!catalogue) {
+      throw new HttpError(404, 'Catalogue not found!');
+    }
+
+    return catalogue;
   },
-  async insertCatalogue(idKataloga: number, datum: Date, rb: string, idDobavljaca: number) {
+  async insertCatalogue(catalogue: Catalogue) {
     return await Database.executeQuery(
       'INSERT INTO katalog(id_kataloga, datum, rb, id_dobavljaca) VALUES($1, $2, $3, $4)',
-      [idKataloga, datum, rb, idDobavljaca]
+      [
+        catalogue.getCatalogueId(),
+        catalogue.getDate(),
+        catalogue.getCatalogueSeqNum(),
+        catalogue.getSupplierId(),
+      ]
     );
   },
-  async updateCatalogue(idKataloga: number, datum: Date, rb: string, idDobavljaca: number) {
-    return await Database.executeQuery(
+  async updateCatalogue(catalogue: Catalogue) {
+    const result = await Database.executeQuery(
       'UPDATE katalog SET datum = $1, rb = $2, id_dobavljaca = $3 WHERE id_kataloga = $4',
-      [datum, rb, idDobavljaca, idKataloga]
+      [
+        catalogue.getDate(),
+        catalogue.getCatalogueSeqNum(),
+        catalogue.getSupplierId(),
+        catalogue.getCatalogueId(),
+      ]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Catalogue not found!');
+    }
   },
-  async deleteCatalogue(idKataloga: number) {
-    return await Database.executeQuery('DELETE FROM katalog WHERE id_kataloga = $1', [idKataloga]);
+  async deleteCatalogue(id: number) {
+    const result = await Database.executeQuery('DELETE FROM katalog WHERE id_kataloga = $1', [id]);
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Catalogue not found!');
+    }
   },
 };

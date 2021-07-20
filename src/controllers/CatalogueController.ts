@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { CatalogueDb } from '../db/modules/catalogue';
+import { Catalogue } from '../models/Catalogue';
+import { CatalogueService } from '../services/CatalogueService';
 
 const logger = getLogger('CatalogueController.ts');
 
@@ -16,7 +17,7 @@ interface ICatalogueController {
 export const CatalogueController: ICatalogueController = {
   async getCatalogues(req, res) {
     try {
-      const catalogues = await CatalogueDb.getCatalogues();
+      const catalogues = await CatalogueService.getCatalogues();
       const tableColumns = [
         'RB',
         'Šifra kataloga',
@@ -36,7 +37,7 @@ export const CatalogueController: ICatalogueController = {
   async getCatalogue(req, res) {
     try {
       let { id } = req.params;
-      const catalogue = await CatalogueDb.getCatalogue(id);
+      const catalogue = await CatalogueService.getCatalogue(id);
 
       return res.status(200).send({ catalogue });
     } catch (error) {
@@ -48,8 +49,13 @@ export const CatalogueController: ICatalogueController = {
   },
   async insertCatalogue(req, res) {
     try {
-      let { idKataloga, datum, rb, idDobavljaca } = req.body;
-      const { insertId } = await CatalogueDb.insertCatalogue(idKataloga, datum, rb, idDobavljaca);
+      const catalogue = new Catalogue(
+        req.params.id,
+        req.body.catalogueSeqNum,
+        req.body.date,
+        req.body.supplierId
+      );
+      const { insertId } = await CatalogueService.insertCatalogue(catalogue);
 
       return res.status(200).send({ insertId });
     } catch (error) {
@@ -61,11 +67,15 @@ export const CatalogueController: ICatalogueController = {
   },
   async updateCatalogue(req, res) {
     try {
-      let { id } = req.params;
-      let { datum, rb, idDobavljaca } = req.body;
-      const catalogue = await CatalogueDb.updateCatalogue(id, datum, rb, idDobavljaca);
+      const catalogue = new Catalogue(
+        req.params.id,
+        req.body.catalogueSeqNum,
+        req.body.date,
+        req.body.supplierId
+      );
+      const updatedCatalogue = await CatalogueService.updateCatalogue(catalogue);
 
-      return res.status(200).send({ catalogue });
+      return res.status(200).send({ updatedCatalogue });
     } catch (error) {
       logger.error(error);
       return res
@@ -76,7 +86,7 @@ export const CatalogueController: ICatalogueController = {
   async deleteCatalogue(req, res) {
     try {
       let { id } = req.params;
-      const catalogue = await CatalogueDb.deleteCatalogue(id);
+      const catalogue = await CatalogueService.deleteCatalogue(id);
 
       return res.status(200).send({ catalogue });
     } catch (error) {
