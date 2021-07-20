@@ -1,53 +1,52 @@
 import { Database } from '..';
+import { HttpError } from '../../error/HttpError';
+import { Product } from '../../models/Product';
 
 export const ProductDb = {
   async getProducts() {
     return await Database.executeQuery(
-      'SELECT id_proizvoda as "idProizvoda", \
-              naziv_proizvoda as "nazivProizvoda",\
-              trenutna_cena as "trenutnaCena", \
-              kolicina, \
-              naziv_tipa_pakovanja as "nazivTipaPakovanja", \
-              id_fabrike as "idFabrike" \
+      'SELECT id_proizvoda as "productId", \
+              naziv_proizvoda as "name",\
+              trenutna_cena as "currentPrice", \
+              kolicina as "amount", \
+              naziv_tipa_pakovanja as "packageType", \
+              id_fabrike as "factoryId" \
               FROM proizvod ORDER BY id_proizvoda'
     );
   },
-  async getProduct(idProizvoda: number) {
-    return await Database.executeQuery(
-      'SELECT id_proizvoda as "idProizvoda", \
-              naziv_proizvoda as "nazivProizvoda",\
-              trenutna_cena as "trenutnaCena", \
-              kolicina, \
-              naziv_tipa_pakovanja as "nazivTipaPakovanja", \
-              id_fabrike as "idFabrike" \
+  async getProduct(productId: number) {
+    const product = await Database.executeQuery(
+      'SELECT id_proizvoda as "productId", \
+              naziv_proizvoda as "name",\
+              trenutna_cena as "currentPrice", \
+              kolicina as "amount", \
+              naziv_tipa_pakovanja as "packageType", \
+              id_fabrike as "factoryId" \
               FROM proizvod \
               WHERE id_proizvoda = ?$1',
-      [idProizvoda]
+      [productId]
     );
+
+    if (!product) {
+      throw new HttpError(404, 'Product not found!');
+    }
+    return product;
   },
-  async insertProduct(
-    idProizvoda: number,
-    nazivProizvoda: string,
-    trenutnaCena: number,
-    kolicina: number,
-    nazivTipaPakovanja: string,
-    idFabrike: number
-  ) {
+  async insertProduct(product: Product) {
     return await Database.executeQuery(
       'INSERT INTO proizvod(id_proizvoda, naziv_proizvoda, trenutna_cena, kolicina, naziv_tipa_pakovanja, id_fabrike) VALUES($1, $2, $3, $4, $5, $6)',
-      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja, idFabrike]
+      [
+        product.getId(),
+        product.getName(),
+        product.getCurrentPrice(),
+        product.getAmount(),
+        product.getPackageType(),
+        product.getFactoryId(),
+      ]
     );
   },
-  async updateProduct(
-    id: number,
-    idProizvoda: number,
-    nazivProizvoda: string,
-    trenutnaCena: number,
-    kolicina: number,
-    nazivTipaPakovanja: string,
-    idFabrike: number
-  ) {
-    return await Database.executeQuery(
+  async updateProduct(id: number, product: Product) {
+    const result = await Database.executeQuery(
       'UPDATE proizvod SET id_proizvoda = $1, \
                            naziv_proizvoda = $2, \
                            trenutna_cena = $3, \
@@ -55,12 +54,28 @@ export const ProductDb = {
                            naziv_tipa_pakovanja = $5, \
                            id_fabrike = $6 \
                            WHERE id_proizvoda = $7',
-      [idProizvoda, nazivProizvoda, trenutnaCena, kolicina, nazivTipaPakovanja, idFabrike, id]
+      [
+        product.getId(),
+        product.getName(),
+        product.getCurrentPrice(),
+        product.getAmount(),
+        product.getPackageType(),
+        product.getFactoryId(),
+        id,
+      ]
     );
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Product not found!');
+    }
   },
-  async deleteProduct(idProizvoda: number) {
-    return await Database.executeQuery('DELETE FROM proizvod WHERE id_proizvoda = $1', [
-      idProizvoda,
+  async deleteProduct(productId: number) {
+    const result = await Database.executeQuery('DELETE FROM proizvod WHERE id_proizvoda = $1', [
+      productId,
     ]);
+
+    if (result.rowCount === 0) {
+      throw new HttpError(404, 'Product not found!');
+    }
   },
 };

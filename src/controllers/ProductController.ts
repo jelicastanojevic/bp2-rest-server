@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
 import { ProductDb } from '../db/modules/product';
+import { Product } from '../models/Product';
 
 const logger = getLogger('ProductController.ts');
 
@@ -27,7 +28,6 @@ export const ProductController: IProductController = {
         'Šifra fabrike',
       ];
 
-      console.log(products);
       return res.status(200).send({ tableColumns: tableColumns, tableData: products.rows });
     } catch (error) {
       logger.error(error);
@@ -38,24 +38,17 @@ export const ProductController: IProductController = {
   },
   async insertProduct(req, res) {
     try {
-      let {
-        idProizvoda,
-        nazivProizvoda,
-        trenutnaCena,
-        kolicina,
-        nazivTipaPakovanja,
-        idFabrike,
-      } = req.body;
-      const { insertId } = await ProductDb.insertProduct(
-        idProizvoda,
-        nazivProizvoda,
-        trenutnaCena,
-        kolicina,
-        nazivTipaPakovanja,
-        idFabrike
+      const product = new Product(
+        req.body.productId,
+        req.body.name,
+        req.body.currentPrice,
+        req.body.amount,
+        req.body.packageType,
+        req.body.factoryId
       );
+      const { insertId } = await ProductDb.insertProduct(product);
 
-      return res.status(200).send({ insertId });
+      return res.status(201).send({ insertId });
     } catch (error) {
       logger.error(error);
       return res
@@ -79,25 +72,17 @@ export const ProductController: IProductController = {
   async updateProduct(req, res) {
     try {
       let { id } = req.params;
-      let {
-        idProizvoda,
-        nazivProizvoda,
-        trenutnaCena,
-        kolicina,
-        nazivTipaPakovanja,
-        idFabrike,
-      } = req.body;
-      const product = await ProductDb.updateProduct(
-        id,
-        idProizvoda,
-        nazivProizvoda,
-        trenutnaCena,
-        kolicina,
-        nazivTipaPakovanja,
-        idFabrike
+      const product = new Product(
+        req.body.productId,
+        req.body.name,
+        req.body.currentPrice,
+        req.body.amount,
+        req.body.packageType,
+        req.body.factoryId
       );
+      const updatedProduct = await ProductDb.updateProduct(id, product);
 
-      return res.status(200).send({ product });
+      return res.status(200).send({ updatedProduct });
     } catch (error) {
       logger.error(error);
       return res
