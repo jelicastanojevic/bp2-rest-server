@@ -19,7 +19,6 @@ export const PriceController: IPriceController = {
       const prices = await PriceDb.getPrices();
       const tableColumns = ['RB', 'Šifra proizvoda', 'Datum promene', 'Cena'];
 
-      // console.log(prices);
       return res.status(200).send({ tableColumns: tableColumns, tableData: prices.rows });
     } catch (error) {
       logger.error(error);

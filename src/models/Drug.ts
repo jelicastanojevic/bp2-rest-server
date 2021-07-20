@@ -1,6 +1,6 @@
 export class Drug {
   constructor(
-    private drugId: number,
+    private id: number,
     private dosePerPackage: number,
     private piecesPerPackage: number,
     private jkl: string,
@@ -8,8 +8,8 @@ export class Drug {
     private measurementUnitId: number
   ) {}
 
-  getDrugId() {
-    return this.drugId;
+  getId() {
+    return this.id;
   }
 
   getDosePerPackage() {

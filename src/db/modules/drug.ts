@@ -14,7 +14,7 @@ export const DrugDb = {
        FROM lek'
     );
   },
-  async getDrug(drugId: number) {
+  async getDrug(id: number) {
     const drug = await Database.executeQuery(
       'SELECT id_leka as idLeka, \
               doza_po_pakovanju as "dosePerPackage", \
@@ -23,7 +23,7 @@ export const DrugDb = {
               id_tipa_pakovanja as "packageId", \
               id_jedinice_mere as "measurementUnitId" \
        FROM lek WHERE id_leka = $1',
-      [drugId]
+      [id]
     );
 
     if (!drug) {

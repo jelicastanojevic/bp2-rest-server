@@ -52,12 +52,12 @@ export const DrugController: IDrugController = {
   async insertDrug(req, res) {
     try {
       const drug = new Drug(
-        req.body.idLeka,
-        req.body.dozaPoPakovanju,
-        req.body.komadPoPakovanju,
+        req.body.drugId,
+        req.body.dosePerPackage,
+        req.body.piecesPerPackage,
         req.body.jkl,
-        req.body.idTipaPakovanja,
-        req.body.idJediniceMere
+        req.body.packageId,
+        req.body.measurementUnitId
       );
       const { insertId } = await DrugService.insertDrug(drug);
 
@@ -74,12 +74,12 @@ export const DrugController: IDrugController = {
       let { id } = req.params;
 
       const drug = new Drug(
-        req.body.idLeka,
-        req.body.dozaPoPakovanju,
-        req.body.komadPoPakovanju,
+        req.body.drugId,
+        req.body.dosePerPackage,
+        req.body.piecesPerPackage,
         req.body.jkl,
-        req.body.idTipaPakovanja,
-        req.body.idJediniceMere
+        req.body.packageId,
+        req.body.measurementUnitId
       );
 
       const updatedDrug = await DrugService.updateDrug(id, drug);
