@@ -2,19 +2,19 @@ import { ProductDb } from '../db/modules/product';
 import { Product } from '../models/Product';
 
 export const ProductService = {
-  async getDrugs() {
+  async getProducts() {
     return ProductDb.getProducts();
   },
-  async getDrug(id: number) {
+  async getProduct(id: number) {
     return ProductDb.getProduct(id);
   },
-  async insertDrug(product: Product) {
+  async insertProduct(product: Product) {
     return ProductDb.insertProduct(product);
   },
-  async updateDrug(id: number, product: Product) {
+  async updateProduct(id: number, product: Product) {
     return ProductDb.updateProduct(id, product);
   },
-  async deleteDrug(id: number): Promise<void> {
+  async deleteProduct(id: number): Promise<void> {
     return ProductDb.deleteProduct(id);
   },
 };

@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import { getLogger } from 'log4js';
 
-import { ProductDb } from '../db/modules/product';
 import { Product } from '../models/Product';
+import { ProductService } from '../services/ProductService';
 
 const logger = getLogger('ProductController.ts');
 
@@ -17,7 +17,7 @@ interface IProductController {
 export const ProductController: IProductController = {
   async getProducts(req, res) {
     try {
-      const products = await ProductDb.getProducts();
+      const products = await ProductService.getProducts();
       const tableColumns = [
         'RB',
         'Šifra proizvoda',
@@ -39,14 +39,14 @@ export const ProductController: IProductController = {
   async insertProduct(req, res) {
     try {
       const product = new Product(
-        req.body.productId,
+        req.body.id,
         req.body.name,
         req.body.currentPrice,
         req.body.amount,
         req.body.packageType,
         req.body.factoryId
       );
-      const { insertId } = await ProductDb.insertProduct(product);
+      const { insertId } = await ProductService.insertProduct(product);
 
       return res.status(201).send({ insertId });
     } catch (error) {
@@ -59,7 +59,7 @@ export const ProductController: IProductController = {
   async getProduct(req, res) {
     try {
       let { id } = req.params;
-      const product = await ProductDb.getProduct(id);
+      const product = await ProductService.getProduct(id);
 
       return res.status(200).send({ product });
     } catch (error) {
@@ -73,14 +73,14 @@ export const ProductController: IProductController = {
     try {
       let { id } = req.params;
       const product = new Product(
-        req.body.productId,
+        req.body.id,
         req.body.name,
         req.body.currentPrice,
         req.body.amount,
         req.body.packageType,
         req.body.factoryId
       );
-      const updatedProduct = await ProductDb.updateProduct(id, product);
+      const updatedProduct = await ProductService.updateProduct(id, product);
 
       return res.status(200).send({ updatedProduct });
     } catch (error) {
@@ -93,7 +93,7 @@ export const ProductController: IProductController = {
   async deleteProduct(req, res) {
     try {
       let { id } = req.params;
-      const product = await ProductDb.deleteProduct(id);
+      const product = await ProductService.deleteProduct(id);
 
       return res.status(200).send({ product });
     } catch (error) {

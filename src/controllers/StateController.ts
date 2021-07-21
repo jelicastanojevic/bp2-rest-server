@@ -38,8 +38,8 @@ export const StateController: IStateController = {
     try {
       const state = new State(
         req.body.productId,
-        req.body.warehouseId,
         req.body.dateOfChange,
+        req.body.warehouseId,
         req.body.amount
       );
       const { insertId } = await StateService.insertState(state);

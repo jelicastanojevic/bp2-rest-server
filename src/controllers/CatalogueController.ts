@@ -50,7 +50,7 @@ export const CatalogueController: ICatalogueController = {
   async insertCatalogue(req, res) {
     try {
       const catalogue = new Catalogue(
-        req.params.id,
+        req.body.id,
         req.body.catalogueSeqNum,
         req.body.date,
         req.body.supplierId

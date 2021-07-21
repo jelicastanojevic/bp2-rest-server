@@ -52,7 +52,7 @@ export const DrugController: IDrugController = {
   async insertDrug(req, res) {
     try {
       const drug = new Drug(
-        req.body.drugId,
+        req.body.id,
         req.body.dosePerPackage,
         req.body.piecesPerPackage,
         req.body.jkl,
@@ -74,7 +74,7 @@ export const DrugController: IDrugController = {
       let { id } = req.params;
 
       const drug = new Drug(
-        req.body.drugId,
+        req.body.id,
         req.body.dosePerPackage,
         req.body.piecesPerPackage,
         req.body.jkl,

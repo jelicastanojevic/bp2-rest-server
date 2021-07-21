@@ -5,7 +5,7 @@ import { Product } from '../../models/Product';
 export const ProductDb = {
   async getProducts() {
     return await Database.executeQuery(
-      'SELECT id_proizvoda as "productId", \
+      'SELECT id_proizvoda as "id", \
               naziv_proizvoda as "name",\
               trenutna_cena as "currentPrice", \
               kolicina as "amount", \
@@ -16,7 +16,7 @@ export const ProductDb = {
   },
   async getProduct(productId: number) {
     const product = await Database.executeQuery(
-      'SELECT id_proizvoda as "productId", \
+      'SELECT id_proizvoda as "id", \
               naziv_proizvoda as "name",\
               trenutna_cena as "currentPrice", \
               kolicina as "amount", \
@@ -46,6 +46,8 @@ export const ProductDb = {
     );
   },
   async updateProduct(id: number, product: Product) {
+    console.log(id);
+    console.log(product);
     const result = await Database.executeQuery(
       'UPDATE proizvod SET id_proizvoda = $1, \
                            naziv_proizvoda = $2, \

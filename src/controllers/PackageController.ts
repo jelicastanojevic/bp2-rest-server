@@ -43,7 +43,7 @@ export const PackageController: IPackageController = {
   },
   async insertPackage(req, res) {
     try {
-      const drugPackage = new Package(req.body.packageId, req.body.name);
+      const drugPackage = new Package(req.body.id, req.body.name);
       const { insertId } = await PackageService.insertPackage(drugPackage);
 
       return res.status(201).send({ insertId });
@@ -57,7 +57,7 @@ export const PackageController: IPackageController = {
   async updatePackage(req, res) {
     try {
       let { id } = req.params;
-      const drugPackage = new Package(req.body.packageId, req.body.name);
+      const drugPackage = new Package(req.body.id, req.body.name);
       const updatedPackage = await PackageService.updatePackage(id, drugPackage);
 
       return res.status(200).send({ updatedPackage });

@@ -5,7 +5,7 @@ import { Drug } from '../../models/Drug';
 export const DrugDb = {
   getDrugs() {
     return Database.executeQuery(
-      'SELECT id_leka as "drugId", \
+      'SELECT id_leka as "id", \
               doza_po_pakovanju as "dosePerPackage", \
               komad_po_pakovanju as "piecesPerPackage", \
               jkl, \
@@ -16,7 +16,7 @@ export const DrugDb = {
   },
   async getDrug(id: number) {
     const drug = await Database.executeQuery(
-      'SELECT id_leka as idLeka, \
+      'SELECT id_leka as id, \
               doza_po_pakovanju as "dosePerPackage", \
               komad_po_pakovanju as "piecesPerPackage", \
               jkl, \
@@ -63,8 +63,8 @@ export const DrugDb = {
       throw new HttpError(404, 'Drug not found!');
     }
   },
-  async deleteDrug(drugId: number) {
-    const result = await Database.executeQuery('DELETE FROM lek WHERE id_leka = $1', [drugId]);
+  async deleteDrug(id: number) {
+    const result = await Database.executeQuery('DELETE FROM lek WHERE id_leka = $1', [id]);
 
     if (result.rowCount === 0) {
       throw new HttpError(404, 'Drug not found!');
